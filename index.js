@@ -1,13 +1,24 @@
 const rideListElement = document.querySelector("#rideList")
-const AllRides = getAllRides()
+const emptyStateElement = document.querySelector("#emptyState")
 
-AllRides.forEach(async([id,value]) =>{
-    const ride = JSON.parse(value)
-    ride.id = id
+// só mostra rides que têm pelo menos uma posição, da mais recente para a mais antiga
+const AllRides = getAllRides()
+    .map(([id,value]) => {
+        const ride = JSON.parse(value)
+        ride.id = id
+        return ride
+    })
+    .filter(ride => ride.data && ride.data.length > 0)
+    .sort((a,b) => b.startTime - a.startTime)
+
+if(AllRides.length === 0)
+    emptyStateElement.classList.remove("d-none")
+
+AllRides.forEach(async(ride) =>{
 
     const itemElement = document.createElement("li")
     itemElement.id = ride.id
-    itemElement.className = "d-flex p-1 align-items-center justify-content-between shadow-sm gap-3 "   //alterado para td vez q a pagina for recarregada os dados n forem chamados primeiro e n ficar trocando na hr q carregar
+    itemElement.className = "ride-card d-flex p-2 align-items-center shadow-sm gap-3"   //alterado para td vez q a pagina for recarregada os dados n forem chamados primeiro e n ficar trocando na hr q carregar
     rideListElement.appendChild(itemElement)
 
     itemElement.addEventListener("click", () => {
@@ -15,53 +26,52 @@ AllRides.forEach(async([id,value]) =>{
     })
 
     const firstPosition = ride.data[0]
-    const firstLocationData = await getLocationData(firstPosition.latitude,firstPosition.longitude) 
 
     const mapID = `map${ride.id}`
     const mapElement = document.createElement("div")
     mapElement.id = mapID
-    mapElement.id = `map${ride.id}`
-    mapElement.style = "width:100px;height:100px"
-    mapElement.classList.add("bg-secondary")
-    mapElement.classList.add("rounded-4")
+    mapElement.className = "ride-map bg-secondary rounded-4"
 
     const dataElement = document.createElement("div")
     dataElement.className = "flex-fill d-flex flex-column"
 
 
     const cityDiv = document.createElement("div")
-    cityDiv.innerText = `${firstLocationData.city}- ${firstLocationData.countryCode}`
-    cityDiv.className = "text-primary mb-2"
+    cityDiv.innerText = "Loading location..."
+    cityDiv.className = "text-primary fw-semibold mb-1"
 
     const maxSpeedDiv = document.createElement("div")
-    maxSpeedDiv.innerText = `Max Speed : ${getMaxSpeed(ride.data)} Km/h`
-    maxSpeedDiv.className = "h5"
+    maxSpeedDiv.innerHTML = `<i class="bi bi-speedometer2 me-1"></i>${getMaxSpeed(ride.data)} Km/h`
+    maxSpeedDiv.className = "h5 mb-1"
 
-    const distanceDiv = document.createElement("div")
-    distanceDiv.innerText = `Distance: ${getDistance(ride.data)} Km`
+    const statsDiv = document.createElement("div")
+    statsDiv.className = "d-flex gap-3 small"
+    statsDiv.innerHTML = `
+        <span><i class="bi bi-signpost me-1"></i>${getDistance(ride.data)} Km</span>
+        <span><i class="bi bi-stopwatch me-1"></i>${getDuration(ride)}</span>
+    `
 
-    const durationDiv = document.createElement("div")
-    durationDiv.innerText = `Duration: ${getDuration(ride)}` 
-    
-    
     const dateDiv = document.createElement("div")
-    dateDiv.innerText = getStartDate(ride)
-    dateDiv.className = "text-secondary mt-2"
+    dateDiv.innerHTML = `<i class="bi bi-calendar3 me-1"></i>${getStartDate(ride)}`
+    dateDiv.className = "text-secondary small mt-1"
 
     dataElement.appendChild(cityDiv)
     dataElement.appendChild(maxSpeedDiv)
-    dataElement.appendChild(distanceDiv)
-    dataElement.appendChild(durationDiv)
+    dataElement.appendChild(statsDiv)
     dataElement.appendChild(dateDiv)
 
     itemElement.appendChild(mapElement)
     itemElement.appendChild(dataElement)
 
+    const chevron = document.createElement("i")
+    chevron.className = "bi bi-chevron-right text-secondary"
+    itemElement.appendChild(chevron)
+
     const map = L.map(mapID,{
         attributionControl:  false,
         zoomControl: false,
         dragging: false
-        //scrollWheelZoom: false , para tirar o zoom do mapa 
+        //scrollWheelZoom: false , para tirar o zoom do mapa
     })
     map.setView([firstPosition.latitude,firstPosition.longitude],12)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,6 +81,12 @@ AllRides.forEach(async([id,value]) =>{
 
     L.marker([firstPosition.latitude,firstPosition.longitude]).addTo(map)
 
+    // a cidade carrega depois, para não travar o resto do card
+    try{
+        const firstLocationData = await getLocationData(firstPosition.latitude,firstPosition.longitude)
+        cityDiv.innerText = `${firstLocationData.city} - ${firstLocationData.countryCode}`
+    }catch(error){
+        cityDiv.innerText = "Unknown location"
+    }
 
 })
-

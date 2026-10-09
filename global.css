@@ -3,7 +3,12 @@
 
 :root, [data-bs-theme=light]{
 
-    --bs-primary-rgb:41,197,207
+    --bs-primary-rgb:41,197,207;
+    --app-bg: #f4f6f8;
+}
+
+body{
+    background-color: var(--app-bg);
 }
 
 .btn-primary {
@@ -23,8 +28,73 @@
     --bs-btn-disabled-border-color: #29c5cf;
 }
 
+/* cabeçalho */
+.app-header{
+    background-color: #fff;
+}
+
+/* lista de rides */
+.ride-card{
+    background-color: #fff;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.ride-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08) !important;
+}
+
+.ride-map{
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    pointer-events: none; /* clique no mapa abre o detalhe */
+}
+
+/* botão flutuante de nova ride */
+.fab{
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    z-index: 999;
+}
+
+/* detalhe */
 #mapDetail{
     height: 300px;
     background-color: #ccc;
-    
+
+}
+
+.stat-card{
+    background-color: #fff;
+    border-radius: .75rem;
+    padding: .75rem;
+    text-align: center;
+}
+
+.stat-card .stat-value{
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.stat-card .stat-label{
+    font-size: .8rem;
+    color: var(--bs-secondary-color);
+}
+
+/* velocímetro */
+.speed-display{
+    background: radial-gradient(circle at center, #2b3035 0%, #16191c 100%);
+}
+
+.speed-value{
+    font-size: 120px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
 }

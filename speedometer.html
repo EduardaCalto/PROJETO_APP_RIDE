@@ -10,23 +10,28 @@
 </head>
 
 <body class="h-100">
-    
+
     <div class="container h-100 d-flex flex-column">
-        <nav class="navbar justify-content-end">
-            <a class="btn btn-close border border-dark p-2" href="./index.html"></a>
+        <nav class="navbar">
+            <a class="btn btn-link text-dark text-decoration-none px-0" href="./index.html">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+            <span class="fw-bold">New ride</span>
+            <span style="width: 60px;"></span>
         </nav>
-        
-        <div class="d-flex flex-column justify-content-center align-items-center bg-dark text-light flex-fill mb-3 rounded-3">
-            <span class="fw-bold" style="font-size: 120px;" id="speed">0</span>
-            <span style="font-size: 36px;">Km/h</span>
+
+        <div class="speed-display d-flex flex-column justify-content-center align-items-center text-light flex-fill mb-3 rounded-4 shadow">
+            <span id="status" class="badge rounded-pill text-bg-secondary mb-3">Ready</span>
+            <span class="speed-value fw-bold" id="speed">0</span>
+            <span class="fs-3 text-white-50">Km/h</span>
         </div>
 
-        <button class="btn btn-primary mb-3" id="start">
-            <span class="display-3">Start</span>
+        <button class="btn btn-primary btn-lg rounded-pill py-3 mb-3" id="start">
+            <i class="bi bi-play-fill me-1"></i>Start
         </button>
 
-        <button class="btn btn-danger d-none mb-3" id="stop">
-            <span class="display-3">Stop</span>
+        <button class="btn btn-danger btn-lg rounded-pill py-3 d-none mb-3" id="stop">
+            <i class="bi bi-stop-fill me-1"></i>Stop
         </button>
     </div>
     <script src="./storage.js"></script>
