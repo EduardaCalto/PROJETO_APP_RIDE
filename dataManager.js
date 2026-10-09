@@ -61,7 +61,7 @@ function getDuration(ride){
     const interval = (ride.stopTime - ride.startTime) / 1000
 
     const minutes = Math.trunc(interval / 60)
-    const seconds = interval % 60
+    const seconds = Math.trunc(interval % 60)
 
     return `${format(minutes,2)}:${format(seconds,2)}`
 
@@ -71,12 +71,13 @@ function getStartDate(ride){
 
     const d = new Date(ride.startTime)
 
-    const day = d.toLocaleString("en-US",{day: "numeric"})
-    const month = d.toLocaleString("en-US",{month: "numeric"})  // mudar para port dps 
-    const year = d.toLocaleString("en-US",{year: "numeric"})
+    // padStart garante os dois dígitos (toLocaleString com "2-digit" não completa o minuto com zero)
+    const day = String(d.getDate()).padStart(2,'0')
+    const month = String(d.getMonth() + 1).padStart(2,'0')
+    const year = d.getFullYear()
 
-    const hour = d.toLocaleString("pt-BR",{hour: "2-digit"})
-    const minute = d.toLocaleString("en-US",{minute: "2-digit"})
+    const hour = String(d.getHours()).padStart(2,'0')
+    const minute = String(d.getMinutes()).padStart(2,'0')
 
 
     return ` ${hour}:${minute} - ${day}/${month}/${year} `
